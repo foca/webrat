@@ -45,5 +45,14 @@ describe Webrat::RackSession do
       request.body.should == "foobar"
       request.GET.should == {"q" => "spam", "x" => "y"}
     end
+
+    it "should be possible to specify env" do
+      @session.get("/", "foobar", :env => {"Accept" => "text/plain"})
+
+      @session.response_code.should == 200
+      request.should be_get
+      request.body.should == "foobar"
+      request.env["Accept"].should == "text/plain"
+    end
   end
 end
