@@ -18,6 +18,7 @@ describe Webrat::RackSession do
 
       @session.response_code.should == 200
       request.should be_get
+      request.GET.should be_empty
       request.body.should be_empty
     end
 
@@ -35,6 +36,7 @@ describe Webrat::RackSession do
 
       request.should be_get
       request.body.should == "foobar"
+      request.GET.should be_empty
     end
 
     it "should work with a body and params" do
@@ -47,12 +49,44 @@ describe Webrat::RackSession do
     end
 
     it "should be possible to specify env" do
+      @session.get("/", :env => {"Accept" => "text/plain"})
+
+      @session.response_code.should == 200
+      request.should be_get
+      request.env["Accept"].should == "text/plain"
+      request.body.should be_empty
+      # TODO: request.params.should be_empty fail
+      request.GET.should be_empty
+    end
+
+    it "should be possible to specify env alongs with a body" do
       @session.get("/", "foobar", :env => {"Accept" => "text/plain"})
 
       @session.response_code.should == 200
       request.should be_get
-      request.body.should == "foobar"
       request.env["Accept"].should == "text/plain"
+      request.body.should == "foobar"
+      request.GET.should be_empty
+    end
+
+    it "should be possible to specify env alongs with params" do
+      @session.get("/", :foo => "bar", :env => {"Accept" => "text/plain"})
+
+      @session.response_code.should == 200
+      request.should be_get
+      request.env["Accept"].should == "text/plain"
+      request.GET.should == {"foo" => "bar"}
+      request.body.should be_empty
+    end
+
+    it "should be possible to specify env alongs with both params and body" do
+      @session.get("/", "a body", :foo => "bar", :env => {"Accept" => "text/plain"})
+
+      @session.response_code.should == 200
+      request.should be_get
+      request.env["Accept"].should == "text/plain"
+      request.GET.should == {"foo" => "bar"}
+      request.body.should == "a body"
     end
   end
 end
