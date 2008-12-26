@@ -30,7 +30,7 @@ module Webrat
     end
 
     private
-      def do_request(verb, path, data=nil, headers=nil)
+      def do_request(verb, path, data = nil, headers = nil)
         uri         = URI(path)
         uri.scheme  = "http"
         uri.host    = "example.org"
@@ -42,8 +42,12 @@ module Webrat
           uri.query = Rack::Utils.build_query(data)
           @request.request(verb, path, Rack::MockRequest.env_for(uri.to_s, env))
         when String
-          uri.query = Rack::Utils.build_query(headers) if headers
+          if headers
+            env = headers.delete(:env) || {}
+            uri.query = Rack::Utils.build_query(headers)
+          end
           options[:input] = data.to_s
+          options.merge!(env) if env
           @request.request(verb, path, Rack::MockRequest.env_for(uri.to_s, options))
         else
           @request.request(verb, path, {})
