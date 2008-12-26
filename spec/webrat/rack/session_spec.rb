@@ -4,11 +4,8 @@ require "webrat/rack"
 
 describe Webrat::RackSession do
   before(:each) do
+    Webrat.configuration.mode = :rack
     @session = Webrat::RackSession.new(TestRackApp.new)
-  end
-
-  it "should set mode to rack" do
-    Webrat.configuration.mode.should == :rack
   end
 
   describe "#get" do
