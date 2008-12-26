@@ -20,7 +20,7 @@ describe Webrat::RackSession do
       @session.response_code.should == 200
       request.should be_get
       request.GET.should be_empty
-      request.body.should be_empty
+      request.body.read.should be_empty
     end
 
     it "should work with params" do
@@ -29,14 +29,14 @@ describe Webrat::RackSession do
       @session.response_code.should == 200
       request.should be_get
       request.GET.should == {"foo" => "bar"}
-      request.body.should be_empty
+      request.body.read.should be_empty
     end
 
     it "should work with a body" do
       @session.request_page("/", "get", "foobar")
 
       request.should be_get
-      request.body.should == "foobar"
+      request.body.read.should == "foobar"
       request.GET.should be_empty
     end
 
@@ -46,7 +46,7 @@ describe Webrat::RackSession do
 
         @session.response_code.should == 200
         request.should be_get
-        request.body.should == "foobar"
+        request.body.read.should == "foobar"
         request.GET.should == {"q" => "spam", "x" => "y"}
       end
     end
@@ -58,7 +58,7 @@ describe Webrat::RackSession do
       @session.response_code.should == 200
       request.should be_get
       request.env["Accept"].should == "text/plain"
-      request.body.should be_empty
+      request.body.read.should be_empty
       # TODO: request.params.should be_empty fail
       request.GET.should be_empty
     end
@@ -70,7 +70,7 @@ describe Webrat::RackSession do
       @session.response_code.should == 200
       request.should be_get
       request.env["Accept"].should == "text/plain"
-      request.body.should == "foobar"
+      request.body.read.should == "foobar"
       request.GET.should be_empty
     end
 
@@ -82,7 +82,7 @@ describe Webrat::RackSession do
       request.should be_get
       request.env["Accept"].should == "text/plain"
       request.GET.should == {"foo" => "bar"}
-      request.body.should be_empty
+      request.body.read.should be_empty
     end
 
     it "should be possible to specify env alongs with both params and body" do
@@ -93,7 +93,7 @@ describe Webrat::RackSession do
         request.should be_get
         request.env["Accept"].should == "text/plain"
         request.GET.should == {"foo" => "bar"}
-        request.body.should == "a body"
+        request.body.read.should == "a body"
       end
     end
   end
