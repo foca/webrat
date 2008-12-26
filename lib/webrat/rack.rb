@@ -1,4 +1,5 @@
-require 'webrat'
+require "webrat"
+require "rack"
 
 class CGIMethods #:nodoc:
   def self.parse_query_parameters(params)
