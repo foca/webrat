@@ -13,6 +13,14 @@ end
 
 module Webrat
   class RackSession < Session #:nodoc:
+    def initialize(app)
+      @request = Rack::MockRequest.new(app)
+    end
+
+    def get(path)
+      @response = @request.request("GET", path, {})
+    end
+
     def response_body
       @response.body
     end
