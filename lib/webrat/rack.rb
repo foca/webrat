@@ -17,8 +17,8 @@ module Webrat
       @request = Rack::MockRequest.new(app)
     end
 
-    def get(path)
-      @response = @request.request("GET", path, {})
+    def get(path, *args)
+      @response = do_request("GET", path, *args)
     end
 
     def response_body
@@ -28,5 +28,26 @@ module Webrat
     def response_code
       @response.status
     end
-  end
+
+    private
+      def do_request(verb, path, data=nil, headers=nil)
+        uri         = URI(path)
+        uri.scheme  = "http"
+        uri.host    = "example.org"
+        options = {}
+
+        case data
+        when Hash
+          env = data.delete(:env) || {}
+          uri.query = Rack::Utils.build_query(data)
+          @request.request(verb, path, Rack::MockRequest.env_for(uri.to_s, env))
+        when String
+          uri.query = Rack::Utils.build_query(headers) if headers
+          options[:input] = data.to_s
+          @request.request(verb, path, Rack::MockRequest.env_for(uri.to_s, options))
+        else
+          @request.request(verb, path, {})
+        end
+      end
+    end
 end
