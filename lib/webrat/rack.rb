@@ -14,8 +14,10 @@ end
 
 module Webrat
   class RackSession < Session #:nodoc:
+    attr_reader :response
+
     def initialize(app)
-      @request = Rack::MockRequest.new(app)
+      @app = app
     end
 
     def get(path, *args)
@@ -40,7 +42,7 @@ module Webrat
         when Hash
           env = data.delete(:env) || {}
           uri.query = Rack::Utils.build_query(data)
-          @request.request(verb, path, Rack::MockRequest.env_for(uri.to_s, env))
+          request.request(verb, path, Rack::MockRequest.env_for(uri.to_s, env))
         when String
           if headers
             env = headers.delete(:env) || {}
@@ -48,10 +50,14 @@ module Webrat
           end
           options = {:input => data.to_s}
           options.merge!(env) if env
-          @request.request(verb, path, Rack::MockRequest.env_for(uri.to_s, options))
+          request.request(verb, path, Rack::MockRequest.env_for(uri.to_s, options))
         else
-          @request.request(verb, path, {})
+          request.request(verb, path, {})
         end
+      end
+      
+      def request
+        Rack::MockRequest.new(@app)
       end
     end
 end
