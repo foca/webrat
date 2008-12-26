@@ -1,19 +1,14 @@
 class TestRackApp
-  DEFAULT_HEADERS = {"Content-Type" => "text/plain"}.freeze
 
   def call(env)
-    request = Rack::Request.new(env)
+    if env["rack.input"]
+      input = env["rack.input"].dup
+      input.rewind
+      env["rack.input"] = input.read
+    end
 
-    case request.request_method
-    when "GET"    then make_response("got a GET")
-    when "POST"   then make_response("got a POST")
-    when "PUT"    then make_response("got a PUT")
-    when "DELETE" then make_response("got a DELETE")
-    end
+    [200, {"Content-Type" => "text/plain"}, [
+      env.to_yaml
+    ]]
   end
-    
-  private
-    def make_response(body, status = 200, headers = {})
-      [status, DEFAULT_HEADERS.merge(headers), [body]]
-    end
 end
