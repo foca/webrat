@@ -34,7 +34,6 @@ module Webrat
         uri         = URI(path)
         uri.scheme  = "http"
         uri.host    = "example.org"
-        options = {}
 
         case data
         when Hash
@@ -46,7 +45,7 @@ module Webrat
             env = headers.delete(:env) || {}
             uri.query = Rack::Utils.build_query(headers)
           end
-          options[:input] = data.to_s
+          options = {:input => data.to_s}
           options.merge!(env) if env
           @request.request(verb, path, Rack::MockRequest.env_for(uri.to_s, options))
         else
