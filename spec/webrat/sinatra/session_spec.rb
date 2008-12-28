@@ -8,16 +8,11 @@ describe Webrat::SinatraSession do
     @session = Webrat::SinatraSession.new
   end
 
-  it "should set mode to :sinatra" do
-    Webrat.configuration.mode.should == :sinatra
-  end
-
   it "should work" do
     @session.request_page("/", "get", "")
     @session.click_link "there"
     @session.fill_in "email", :with => "me@example.org"
     @session.click_button "spam"
-    # TODO: use should have_text or something
-    @session.response_body.should =~ /hello, me@example\.org/
+    @session.response_body.should contain("hello, me@example.org")
   end
 end
