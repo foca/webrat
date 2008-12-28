@@ -60,7 +60,7 @@ module Webrat
 
       def uri(path, data={})
         uri = URI(path)
-        uri.query = Rack::Utils.build_query(data)
+        uri.query = data.map {|k,v| "#{k}=#{v}" }.join("&")
         uri.to_s
       end
   end
