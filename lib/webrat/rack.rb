@@ -18,6 +18,7 @@ module Webrat
 
     def initialize(app)
       @app = app
+      super
     end
 
     def get(path, *args)
