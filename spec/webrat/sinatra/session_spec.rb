@@ -15,7 +15,9 @@ describe Webrat::SinatraSession do
   it "should work" do
     @session.request_page("/", "get", "")
     @session.click_link "there"
-    # TODO: use webrat method instead
-    @session.response_body.should =~ /form/
+    @session.fill_in "email", :with => "me@example.org"
+    @session.click_button "spam"
+    # TODO: use should have_text or something
+    @session.response_body.should =~ /hello, me@example\.org/
   end
 end

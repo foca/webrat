@@ -39,7 +39,7 @@ __END__
 @@ go
 <form method="post" action="/go">
   <input type="text" name="email" id="email">
-  <input type="submit" />
+  <input type="submit" name="spam" value="spam mea, please!" />
 </form>
 
 @@ hello
