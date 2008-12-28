@@ -8,12 +8,9 @@ class TestRackApp
   end
 
   def call(env)
-    [200, {"Content-Type" => "text/plain"}, [
-      env.tap do |env|
-        if input = env["rack.input"]
-          env["rack.input"] = FakeStringIO.new(input.read)
-        end
-      end.to_yaml
-    ]]
+    if input = env["rack.input"]
+      env["rack.input"] = FakeStringIO.new(input.read)
+    end
+    [200, {"Content-Type" => "text/plain"}, [env.to_yaml]]
   end
 end
