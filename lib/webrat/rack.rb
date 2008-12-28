@@ -1,5 +1,4 @@
 require "webrat"
-require "pp"
 require "rack"
 
 class CGIMethods #:nodoc:
