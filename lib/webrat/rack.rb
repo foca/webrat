@@ -15,11 +15,7 @@ end
 module Webrat
   class RackSession < Session #:nodoc:
     attr_reader :response
-
-    def initialize(app)
-      @app = app
-      super
-    end
+    attr_accessor :app
 
     def get(path, *args)
       @response = do_request("GET", path, *args)
@@ -58,7 +54,7 @@ module Webrat
       end
       
       def request
-        Rack::MockRequest.new(@app)
+        Rack::MockRequest.new(app)
       end
     end
 end
