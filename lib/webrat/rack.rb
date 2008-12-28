@@ -1,5 +1,4 @@
 require "webrat"
-require "pp"
 require "rack"
 
 class CGIMethods #:nodoc:
@@ -15,7 +14,7 @@ end
 
 module Webrat
   class RackSession < Session #:nodoc:
-    attr_reader :response, :request
+    attr_reader :response
     attr_accessor :app
 
     def get(path, data={}, headers={})
@@ -41,6 +40,10 @@ module Webrat
     def response_code
       @response.status
     end
+    
+    def request
+      @request ||= Rack::MockRequest.new(app)
+    end
 
     private
       def do_request(verb, path, data={}, headers={})
@@ -49,9 +52,7 @@ module Webrat
           data = {}
         end
 
-        @request = Rack::MockRequest.new(app)
         @response = request.send(verb, uri(path, data), headers)
-        follow_redirect while @response.redirect?
       end
 
       def follow_redirect
