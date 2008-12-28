@@ -4,6 +4,8 @@ require "action_controller"
 require "action_controller/integration"
 
 module Webrat
+  configuration.mode = :rails
+  
   class RailsSession < Session #:nodoc:
 
     def doc_root

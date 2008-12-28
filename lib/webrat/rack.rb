@@ -12,6 +12,8 @@ class CGIMethods #:nodoc:
 end
 
 module Webrat
+  configuration.mode = :rack
+
   class RackSession < Session #:nodoc:
     def response_body
       @response.body

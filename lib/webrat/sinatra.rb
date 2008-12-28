@@ -3,6 +3,8 @@ require 'sinatra'
 require 'sinatra/test/methods'
 
 module Webrat
+  configuration.mode = :sinatra
+
   class SinatraSession < RackSession #:nodoc:
     include Sinatra::Test::Methods
 

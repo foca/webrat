@@ -1,6 +1,8 @@
 require "mechanize"
 
 module Webrat #:nodoc:
+  configuration.mode = :mechanize
+  
   class MechanizeSession < Session #:nodoc:
     
     attr_accessor :response

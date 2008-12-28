@@ -55,5 +55,10 @@ describe Webrat::Configuration do
       config.should_receive(:require).with("webrat/#{mode}")
       config.mode = mode
     end
+    
+    it "should set the mode to :#{mode} when requiring webrat/#{mode}" do
+      require "webrat/#{mode}"
+      Webrat.configuration.mode.should == mode
+    end
   end
 end

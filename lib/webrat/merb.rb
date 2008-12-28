@@ -8,6 +8,8 @@ require "merb-core"
 HashWithIndifferentAccess = Mash
 
 module Webrat
+  configuration.mode = :merb
+  
   class MerbSession < Session #:nodoc:
     include Merb::Test::MakeRequest
     
