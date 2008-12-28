@@ -1,4 +1,5 @@
 require "webrat"
+require "pp"
 require "rack"
 
 class CGIMethods #:nodoc:
@@ -17,8 +18,20 @@ module Webrat
     attr_reader :response
     attr_accessor :app
 
-    def get(path, *args)
-      @response = do_request("GET", path, *args)
+    def get(path, data={}, headers={})
+      do_request("GET", path, data, headers)
+    end
+
+    def post(path, data={}, headers={})
+      do_request("POST", path, data, headers)
+    end
+
+    def put(path, data={}, headers={})
+      do_request("PUT", path, data, headers)
+    end
+
+    def delete(path, data={}, headers={})
+      do_request("DELETE", path, data, headers)
     end
 
     def response_body
@@ -30,31 +43,26 @@ module Webrat
     end
 
     private
-      def do_request(verb, path, data = nil, headers = nil)
-        uri         = URI(path)
-        uri.scheme  = "http"
-        uri.host    = "example.org"
-
-        case data
-        when Hash
-          env = data.delete(:env) || {}
-          uri.query = Rack::Utils.build_query(data)
-          request.request(verb, path, Rack::MockRequest.env_for(uri.to_s, env))
-        when String
-          if headers
-            env = headers.delete(:env) || {}
-            uri.query = Rack::Utils.build_query(headers)
-          end
-          options = {:input => data.to_s}
-          options.merge!(env) if env
-          request.request(verb, path, Rack::MockRequest.env_for(uri.to_s, options))
-        else
-          request.request(verb, path, {})
+      def do_request(verb, path, data={}, headers={})
+        if data.is_a?(String)
+          headers.update(:input => data)
+          data = {}
         end
+        
+        @response = request.request(verb, path, Rack::MockRequest.env_for(uri(path, data), headers))
+        @response = request_page(@response.location, :get, {}) if @response.redirect?
       end
       
       def request
         Rack::MockRequest.new(app)
+      end
+      
+      def uri(path, data={})
+        uri          = URI(path)
+        uri.scheme ||= "http"
+        uri.host   ||= "example.org"
+        uri.query    = Rack::Utils.build_query(data)
+        uri.to_s
       end
     end
 end
