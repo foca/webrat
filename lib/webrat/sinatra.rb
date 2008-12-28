@@ -1,8 +1,4 @@
 require 'webrat/rack'
-require 'sinatra'
-
-disable :run
-disable :reload
 
 module Webrat
   class SinatraSession < RackSession #:nodoc:
