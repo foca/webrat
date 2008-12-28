@@ -7,7 +7,7 @@ disable :reload
 module Webrat
   class SinatraSession < RackSession #:nodoc:
     def initialize(app=Sinatra.build_application)
-      @app = app
+      super(app)
     end
   end
 end
