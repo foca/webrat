@@ -53,6 +53,7 @@ module Webrat
         end
 
         @response = request.send(verb, uri(path, data), headers)
+        follow_redirect while response.redirect?
       end
 
       def follow_redirect
