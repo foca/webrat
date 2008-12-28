@@ -15,23 +15,23 @@ end
 
 module Webrat
   class RackSession < Session #:nodoc:
-    attr_reader :response
+    attr_reader :response, :request
     attr_accessor :app
 
     def get(path, data={}, headers={})
-      do_request("GET", path, data, headers)
+      do_request(:get, path, data, headers)
     end
 
     def post(path, data={}, headers={})
-      do_request("POST", path, data, headers)
+      do_request(:post, path, data, headers)
     end
 
     def put(path, data={}, headers={})
-      do_request("PUT", path, data, headers)
+      do_request(:put, path, data, headers)
     end
 
     def delete(path, data={}, headers={})
-      do_request("DELETE", path, data, headers)
+      do_request(:delete, path, data, headers)
     end
 
     def response_body
@@ -48,21 +48,20 @@ module Webrat
           headers.update(:input => data)
           data = {}
         end
-        
-        @response = request.request(verb, path, Rack::MockRequest.env_for(uri(path, data), headers))
-        @response = request_page(@response.location, :get, {}) if @response.redirect?
+
+        @request = Rack::MockRequest.new(app)
+        @response = request.send(verb, uri(path, data), headers)
+        follow_redirect while @response.redirect?
       end
-      
-      def request
-        Rack::MockRequest.new(app)
+
+      def follow_redirect
+        @response = request_page(@response.location, :get, {})
       end
-      
+
       def uri(path, data={})
-        uri          = URI(path)
-        uri.scheme ||= "http"
-        uri.host   ||= "example.org"
-        uri.query    = Rack::Utils.build_query(data)
+        uri = URI(path)
+        uri.query = Rack::Utils.build_query(data)
         uri.to_s
       end
-    end
+  end
 end
