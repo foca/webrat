@@ -14,7 +14,8 @@ module Webrat
     %w(get head post put delete).each do |verb|
       define_method(verb) do |*args| # (path, data, headers = nil)
         path, data, headers = *args
-        params = data.merge({:env => headers || {}})
+        data = data.inject({}) {|data, (key,value)| data[key] = Rack::Utils.unescape(value); data }
+        params = data.merge(:env => headers || {})
         self.__send__("#{verb}_it", path, params)
       end
     end
